@@ -7,7 +7,11 @@ const secrets = require('./secrets.js')
 
 const bot = new TelegramBot(secrets.telegram.token, {polling: true})
 
+let helpText = `Hey!\n\nUse /check followed by a station code to check if the gates are open.\nUse /open or /closed followed by a station code to let others know.\nUse /undo followed by a station code to undo your report for that station.\n\n/help will get you this message again`
+
 bot.onText(/\/check (.+)/i, (msg, match) => {
+  console.log(match[0])
+
   let code = match[1].toUpperCase()
 
   client.hget('stationsshorttolong', code, (err, stationName) => {
@@ -24,11 +28,11 @@ bot.onText(/\/check (.+)/i, (msg, match) => {
         }
 
         if(value > 0) {
-          response = `The gates are reported to be open at ${stationName}! (confidence: ${value})`
+          response = `The ticket barriers are reported to be open at ${stationName}! (confidence: ${value})`
         } else if(value < 0) {
-          response = `The gates are reported to be closed at ${stationName} (confidence: ${-value})`
+          response = `The ticket barriers are reported to be closed at ${stationName} (confidence: ${-value})`
         } else {
-          response = `Sorry, I don't really know about the gates at ${stationName} 😕`
+          response = `Sorry, I don't really know about the barriers at ${stationName} 😕`
         }
 
         bot.sendMessage(msg.from.id, response)
@@ -42,6 +46,8 @@ bot.onText(/\/check (.+)/i, (msg, match) => {
 })
 
 bot.onText(/\/undo (.+)/i, (msg, match) => {
+  console.log(match[0])
+
   let code = match[1].toUpperCase()
 
   client.hget('stationsshorttolong', code, (err, stationName) => {
@@ -64,6 +70,8 @@ bot.onText(/\/undo (.+)/i, (msg, match) => {
 })
 
 bot.onText(/\/open (.+)/i, (msg, match) => {
+  console.log(match[0])
+
   let code = match[1].toUpperCase()
 
   client.hget('stationsshorttolong', code, (err, stationName) => {
@@ -86,6 +94,8 @@ bot.onText(/\/open (.+)/i, (msg, match) => {
 })
 
 bot.onText(/\/closed (.+)/i, (msg, match) => {
+  console.log(match[0])
+
   let code = match[1].toUpperCase()
 
   client.hget('stationsshorttolong', code, (err, stationName) => {
@@ -108,13 +118,13 @@ bot.onText(/\/closed (.+)/i, (msg, match) => {
 })
 
 bot.onText(/\/help/i, (msg, match) => {
-  let response = `Hey!\nUse /check followed by a station code to check if the gates are open.\nUse /open or /closed followed by a station code to let others know.\n\n/help will get you this message again`
+  console.log(match[0])
 
-  bot.sendMessage(msg.from.id, response)
+  bot.sendMessage(msg.from.id, helpText)
 })
 
 bot.onText(/\/start/i, (msg, match) => {
-  let response = `Hey!\nUse /check followed by a station code to check if the gates are open.\nUse /open or /closed followed by a station code to let others know.\n\n/help will get you this message again`
+  console.log(match[0])
 
-  bot.sendMessage(msg.from.id, response)
+  bot.sendMessage(msg.from.id, helpText)
 })
